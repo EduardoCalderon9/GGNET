@@ -44,7 +44,7 @@ if selection == 'Creacion de Anuncios':
         </style>""", unsafe_allow_html=True)
     else:
         m = st.markdown("""
-        <style>
+        <style> 
         div.stButton > button:first-child {
             background-color: rgb(0, 119, 181);
             color: rgb(255 ,255 ,255);
