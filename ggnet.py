@@ -2,8 +2,8 @@ import streamlit as st
 import requests
 from openai import OpenAI
 
-
-client = OpenAI(api_key='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') 
+key = st.text_input('OpenAI API Key')
+client = OpenAI(api_key=key) 
 
 
 st.title('GGNET')
