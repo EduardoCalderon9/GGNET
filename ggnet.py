@@ -17,7 +17,6 @@ if 'content' not in st.session_state:
 
 #with st.sidebar:
 #    st.text('a')
-st.write(st.session_state)
 def generate_title():
     completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
