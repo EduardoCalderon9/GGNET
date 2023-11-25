@@ -17,7 +17,29 @@ if 'content' not in st.session_state:
 
 #with st.sidebar:
 #    st.text('a')
+st.write(st.session_state)
+def generate_title():
+    completion = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": ggnet_description},
+        {"role": "user", "content": f"Escribe el titulo para un post en {app} sobre {ad_topic}. {indications}"}
+    ]
+    )
+    st.session_state.title = completion.choices[0].message.content.replace('\n', '  \n')
+    #ad_title = title_placeholder.text_input('Titulo del Anuncio', value=st.session_state.title.replace('\n', '  \n'), key=6)
 
+def generate_content():
+    completion_content= client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": ggnet_description},
+        {"role": "user", "content": f"Escribe el contenido para un post en {app} sobre {ad_topic}. {indications}"}
+    ]
+    )
+    st.session_state.content = completion_content.choices[0].message.content
+
+    #ad_content = content_placeholder.text_area('Contenido del Anuncio', value=st.session_state.content.replace('\n', '  \n'), key=8)
 
 cloud_tab, internet_tab = st.tabs(['Cloud', 'Internet'])
 with cloud_tab:
@@ -45,36 +67,13 @@ with cloud_tab:
         indications = st.text_input('Indicaciones adicionales:')
 
         title_placeholder= st.empty()
-        generate_title = st.button('Generar Titulo', key=3)
+        ad_title = st.text_input('Titulo del Anuncio', key='title')
+        title_button = st.button('Generar Titulo', key=3, on_click=generate_title)
 
         content_placeholder = st.empty()
-        generate_content = st.button('Generar Contenido', key=5)
 
-        ad_title = st.text_input('Titulo del Anuncio', value=st.session_state.title.replace('\n', '  \n'), key=6)
-        ad_content = st.text_area('Contenido del Anuncio', value=st.session_state.content.replace('\n', '  \n'), key=8)
-
-
-        if generate_title:
-            completion = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": ggnet_description},
-                {"role": "user", "content": f"Escribe el titulo para un post en {app} sobre {ad_topic}. {indications}"}
-            ]
-            )
-            st.session_state.title = completion.choices[0].message.content
-            #ad_title = title_placeholder.text_input('Titulo del Anuncio', value=st.session_state.title.replace('\n', '  \n'), key=6)
-        if generate_content:
-            completion_content= client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": ggnet_description},
-                {"role": "user", "content": f"Escribe el contenido para un post en {app} sobre {ad_topic}. {indications}"}
-            ]
-            )
-            st.session_state.content = completion_content.choices[0].message.content
-    
-            #ad_content = content_placeholder.text_area('Contenido del Anuncio', value=st.session_state.content.replace('\n', '  \n'), key=8)
+        ad_content = st.text_area('Contenido del Anuncio', key='content')
+        content_button = st.button('Generar Contenido', key='ffff', on_click=generate_content)
 
 
         if app == 'Facebook':
@@ -136,7 +135,7 @@ with internet_tab:
     with st.expander("Configuración"):
         key = st.text_input("OpenAI API Key", key='fd')
         st.caption("Por seguridad debes introducir tu llave del API de OpenAI de forma manual. Si no sabes como obtenerla consulta 'Obtener llave de OpenAI'")
-        ggnet_description = st.text_area(label='Descripcion de GGNET', value="Generas textos para correos y anuncios para una empresa llamada GGNET.  \nGGNET es una empresa que ofrece planes de internet para tres condominios (Colinas del Norte, Colinas del Norte 2 y El Fiscal). \nEl slogan de la empresa es 'Tu aliado estratégico en tecnología' ")
+        ggnet_description = st.text_area(label='Descripcion de GGNET', value="Generas textos para correos y anuncios para una empresa llamada GGNET.  \nGGNET es una empresa que ofrece planes de internet para tres condominios (Colinas del Norte, Colinas del Norte 2 y El Fiscal).  \nAdemas de los planes de internet, GGNET tambien ofrece una aplicación de streaming  \nEl slogan de la empresa es 'Tu aliado estratégico en tecnología' ")
         st.caption("Esta descripción le explica a ChatGPT que es GGNET y que servicios ofrece. Para mejores resultados esta debe ser lo mas detallada posible.")
 
     if key:
