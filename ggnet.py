@@ -15,8 +15,9 @@ if 'content' not in st.session_state:
     st.session_state['content'] = ''
 
 
-#with st.sidebar:
-#    st.text('a')
+with st.sidebar:
+    st.text('a')
+st.write(st.session_state)
 def generate_title():
     completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
@@ -30,7 +31,7 @@ def generate_title():
 
 def generate_content():
     completion_content= client.chat.completions.create(
-    model="gpt-3.5-turbo",
+    model="gpt-4",
     messages=[
         {"role": "system", "content": ggnet_description},
         {"role": "user", "content": f"Escribe el contenido para un post en {app} sobre {ad_topic}. {indications}"}
@@ -50,8 +51,9 @@ with cloud_tab:
 
     if key:
         client = OpenAI(api_key=key) 
-    selection = st.selectbox('Seleccionar', ['Envio de Correos', 'Creacion de Anuncios', 'Peticion Personalizada'])
-    print('render')
+    selection = st.selectbox('Seleccionar', ['Creacion de Anuncios', 'Peticion Personalizada', 'Ideas para videos'])
+
+
     if selection == 'Envio de Correos':
         destinatario = st.text_input('Ingrese un destinatario')
         placeholder = st.empty()
@@ -66,6 +68,7 @@ with cloud_tab:
         indications = st.text_input('Indicaciones adicionales:')
 
         title_placeholder= st.empty()
+        st.divider()
         ad_title = st.text_input('Titulo del Anuncio', key='title')
         title_button = st.button('Generar Titulo', key=3, on_click=generate_title)
 
