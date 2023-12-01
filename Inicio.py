@@ -21,8 +21,6 @@ if 'script' not in st.session_state:
     st.session_state['script'] = ''
 
 
-with st.sidebar:
-    st.text('a')
 
 def generate_text(system, user):
     completion = client.chat.completions.create(
