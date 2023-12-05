@@ -7,6 +7,7 @@ st.set_page_config(page_title="GGNET", page_icon="📊", layout="wide" )
 st.title('GGNET')
 st.header('Manejo de APIs de Facebook, LinkedIn y ChatGPT')
 query_params = st.experimental_get_query_params()
+client = OpenAI(api_key=st.secrets['OPENAI_KEY']) 
 
 if 'cloud_title' not in st.session_state:
     st.session_state['cloud_title'] = ''
@@ -31,9 +32,10 @@ if 'internet_idea' not in st.session_state:
 
 if 'internet_script' not in st.session_state:
     st.session_state['internet_script'] = ''
-
 def generate_text(system, user):
     '''Funcion utilizada para generar textos con el modelo gpt 3.5 turbo, el parametro system representa el mensaje de configuracion inicial y user representa la peticion deseada'''
+    if client is None:
+        return "Error: No se ha establecido una conexión con OpenAI"
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -65,7 +67,6 @@ with cloud_tab:
         ggnet_description = st.text_area(label='Descripcion de GGNET', value="Generas textos para correos y anuncios para una empresa llamada GGNET.  \nGGNET es una empresa que ofrece distintos servicios en la nube, estos incluyen Hosting confiable y seguro; Imágenes de Ubuntu, Debian, CentOS y demás sistemas operativos; Migraciones, Snapshots, Almacenamiento, Balanceadores de carga, Dominios y SSL.  \nGGNET también ofrece servicios en la nube ofrecen el servicio de desarrollo de software que incluye desarrollo web, móvil y de escritorio, además de capacitaciones y seguimiento de proyectos de software.  \nEl slogan de la empresa es 'Tu aliado estratégico en tecnología' ")
         st.caption("Esta descripción le explica a ChatGPT que es GGNET y que servicios ofrece. Para mejores resultados esta debe ser lo mas detallada posible.")
     
-    client = OpenAI(api_key=st.secrets['OPENAI_KEY']) 
     selection = st.selectbox('Seleccionar funcion', ['Creacion de Anuncios', 'Ideas para videos'], key='cloud_select')
 
     if selection == 'Ideas para videos':
