@@ -31,7 +31,7 @@ if 'internet_idea' not in st.session_state:
 
 if 'internet_script' not in st.session_state:
     st.session_state['internet_script'] = ''
-st.write(st.session_state)
+
 def generate_text(system, user):
     '''Funcion utilizada para generar textos con el modelo gpt 3.5 turbo, el parametro system representa el mensaje de configuracion inicial y user representa la peticion deseada'''
     completion = client.chat.completions.create(
