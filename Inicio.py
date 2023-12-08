@@ -38,7 +38,7 @@ with cloud_tab:
         st.caption("Esta descripción le explica a ChatGPT que es GGNET y que servicios ofrece. Para mejores resultados esta debe ser lo mas detallada posible.")
     
     client = OpenAI(api_key=st.secrets['OPENAI_KEY']) 
-    selection = st.selectbox('Seleccionar funcion', ['Creacion de Anuncios', 'Peticion Personalizada', 'Ideas para videos'], key='cloud_select')
+    selection = st.selectbox('Seleccionar funcion', ['Creacion de Anuncios','Ideas para videos'], key='cloud_select')
 
 
     if selection == 'Envio de Correos':
@@ -49,18 +49,6 @@ with cloud_tab:
         if generate_text_button:
             input = placeholder.text_area('Contenido del Correo', value='🚀💻 ¡GGNet: tu aliado tecnológico para el éxito empresarial! 💡🌐\n\nEn GGNet entendemos que la tecnología es fundamental para el crecimiento y el éxito de tu empresa. Por eso, ofrecemos una amplia gama de servicios de consultoría y soluciones de infraestructura de TI 🔧🌐, para que puedas aprovechar al máximo todo el potencial de la era digital.', key=1)
    
-   
-    if selection == 'Ideas para videos':
-        ad_topic = st.text_input('Describir tema del video', key='cloud_video_topic')
-        custom = st.text_input('Indicaciones adicionales:', key='cloud_video_custom')
-        duration = st.text_input('Cuanto deseas que dure el video:', key='cloud_video_duration')
-        st.divider()
-        script = st.text_area('Guión del Anuncio', key='cloud_script')
-        generate_script = st.button('Generar Guión', key='cloud_gen_script', on_click=generate_text, args=[ggnet_description, f"Escribe un guion para un anuncio de video sobre {ad_topic} con una duración de {duration}. {custom}"])
-
-        idea = st.text_area('Idea Visual', key='cloud_idea')
-        generate_idea = st.button('Generar idea', key='gen_cloud_idea', on_click=generate_text, args=[ggnet_description, f"Dame una idea sobre lo que podria mostrar en un video sobre {ad_topic}. {custom}"])
-
     if selection == 'Ideas para videos':
         ad_topic = st.text_input('Describir tema del video', key='cloud_video_topic')
         custom = st.text_input('Indicaciones adicionales:', key='cloud_video_custom')
@@ -133,17 +121,7 @@ with internet_tab:
         st.caption("Esta descripción le explica a ChatGPT que es GGNET y que servicios ofrece. Para mejores resultados esta debe ser lo mas detallada posible.")
 
     client = OpenAI(api_key=st.secrets['OPENAI_KEY']) 
-    selection = st.selectbox('Seleccionar funcion', ['Creacion de Anuncios', 'Peticion Personalizada', 'Ideas para videos'], key='internet_select')
-
-
-    if selection == 'Envio de Correos':
-        destinatario = st.text_input('Ingrese un destinatario')
-        placeholder = st.empty()
-        input = placeholder.text_area('Contenido del Correo')
-        generate_text_button = st.button('Generar Contenido', key='internet_content')
-        if generate_text_button:
-            input = placeholder.text_area('Contenido del Correo', value='🚀💻 ¡GGNet: tu aliado tecnológico para el éxito empresarial! 💡🌐\n\nEn GGNet entendemos que la tecnología es fundamental para el crecimiento y el éxito de tu empresa. Por eso, ofrecemos una amplia gama de servicios de consultoría y soluciones de infraestructura de TI 🔧🌐, para que puedas aprovechar al máximo todo el potencial de la era digital.', key=1)
-   
+    selection = st.selectbox('Seleccionar funcion', ['Creacion de Anuncios',  'Ideas para videos'], key='internet_select')
    
     if selection == 'Ideas para videos':
         ad_topic = st.text_input('Describir tema del video', key='internet_video_topic')
