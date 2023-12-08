@@ -28,14 +28,18 @@ if 'internet_custom' not in st.session_state:
 
 def generate_text(system, user):
     '''Funcion utilizada para generar textos con el modelo gpt 3.5 turbo, el parametro system representa el mensaje de configuracion inicial y user representa la peticion deseada'''
-    completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user}
-        ]
-    )
-    return completion.choices[0].message.content.replace('\n', '  \n')
+    try:
+        completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user}
+            ]
+        )
+        return completion.choices[0].message.content.replace('\n', '  \n')
+    except:
+        print('An exception occurred')
+        return 'Ocurrio un error, intentelo mas tarde.'
 
 def generate_title(system, user):
     st.session_state.cloud_title = generate_text(system, user)
@@ -77,8 +81,8 @@ with cloud_tab:
         custom = st.text_input('Indicaciones adicionales:', key='cloud_video_custom')
         duration = st.text_input('Cuanto deseas que dure el video:', key='cloud_video_duration')
         st.divider()
-        script = st.text_area('Guion del Anuncio', key='cloud_script')
-        generate_script = st.button('Generar Guion', key='cloud_gen_script', on_click=generate_script, args=[ggnet_description, f"Escribe un guion para un anuncio de video sobre {ad_topic} con una duración de {duration}. {custom}"])
+        script = st.text_area('Guión del Anuncio', key='cloud_script')
+        generate_script = st.button('Generar Guión', key='cloud_gen_script', on_click=generate_script, args=[ggnet_description, f"Escribe un guion para un anuncio de video sobre {ad_topic} con una duración de {duration}. {custom}"])
 
         idea = st.text_area('Idea Visual', key='cloud_idea')
         generate_idea = st.button('Generar idea', key='gen_cloud_idea', on_click=generate_idea, args=[ggnet_description, f"Dame una idea sobre lo que podria mostrar en un video sobre {ad_topic}. {custom}"])
@@ -158,8 +162,8 @@ with internet_tab:
         custom = st.text_input('Indicaciones adicionales:', key='internet_video_custom')
         duration = st.text_input('Cuanto deseas que dure el video:', key='internet_video_duration')
         st.divider()
-        script = st.text_area('Guion del Anuncio', key='internet_script')
-        generate_script = st.button('Generar Guion', key='internet_gen_script', on_click=generate_script, args=[ggnet_description, f"Escribe un guion para un anuncio de video sobre {ad_topic} con una duración de {duration}. {custom}"])
+        script = st.text_area('Guión del Anuncio', key='internet_script')
+        generate_script = st.button('Generar Guión', key='internet_gen_script', on_click=generate_script, args=[ggnet_description, f"Escribe un guion para un anuncio de video sobre {ad_topic} con una duración de {duration}. {custom}"])
 
         idea = st.text_area('Idea Visual', key='internet_idea')
         generate_idea = st.button('Generar idea', key='gen_internet_idea', on_click=generate_idea, args=[ggnet_description, f"Dame una idea sobre lo que podria mostrar en un video sobre {ad_topic}. {custom}"])
