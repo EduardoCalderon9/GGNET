@@ -20,6 +20,12 @@ if 'idea' not in st.session_state:
 if 'script' not in st.session_state:
     st.session_state['script'] = ''
 
+if 'cloud_custom' not in st.session_state:
+    st.session_state['cloud_custom'] = ''
+
+if 'internet_custom' not in st.session_state:
+    st.session_state['internet_custom'] = ''
+
 def generate_text(system, user):
     '''Funcion utilizada para generar textos con el modelo gpt 3.5 turbo, el parametro system representa el mensaje de configuracion inicial y user representa la peticion deseada'''
     completion = client.chat.completions.create(
@@ -31,6 +37,26 @@ def generate_text(system, user):
     )
     return completion.choices[0].message.content.replace('\n', '  \n')
 
+def generate_title(system, user):
+    st.session_state.cloud_title = generate_text(system, user)
+    st.session_state.internet_title = generate_text(system, user)
+
+def generate_content(system, user):
+    st.session_state.cloud_content = generate_text(system, user)
+    st.session_state.internet_content = generate_text(system, user)
+
+def generate_idea(system, user):
+    st.session_state.cloud_idea = generate_text(system, user)
+    st.session_state.internet_idea = generate_text(system, user)
+
+def generate_script(system, user):
+    st.session_state.cloud_script = generate_text(system, user)
+    st.session_state.internet_script = generate_text(system, user)
+
+def generate_custom(system, user):
+    st.session_state.cloud_custom = generate_text(system, user)
+    st.session_state.internet_custom = generate_text(system, user)
+
 cloud_tab, internet_tab = st.tabs(['Cloud', 'Internet'])
 with cloud_tab:
     with st.expander("Configuración"):
@@ -38,27 +64,24 @@ with cloud_tab:
         st.caption("Esta descripción le explica a ChatGPT que es GGNET y que servicios ofrece. Para mejores resultados esta debe ser lo mas detallada posible.")
     
     client = OpenAI(api_key=st.secrets['OPENAI_KEY']) 
-    selection = st.selectbox('Seleccionar funcion', ['Creacion de Anuncios','Ideas para videos'], key='cloud_select')
+    selection = st.selectbox('Seleccionar funcion', ['Creacion de Anuncios','Ideas para videos', 'Petición Personalizada'], key='cloud_select')
+
+    if selection == 'Petición Personalizada':
+        req = st.text_input('Petición', key='cloud_req')
+        generate_script = st.button('Generar Respuesta', key='cloud_gen_custom', on_click=generate_custom, args=[ggnet_description, req])
+        cloud_custom = st.text_area('Respuesta', key='cloud_custom')
 
 
-    if selection == 'Envio de Correos':
-        destinatario = st.text_input('Ingrese un destinatario')
-        placeholder = st.empty()
-        input = placeholder.text_area('Contenido del Correo')
-        generate_text_button = st.button('Generar Contenido', key='cloud_content')
-        if generate_text_button:
-            input = placeholder.text_area('Contenido del Correo', value='🚀💻 ¡GGNet: tu aliado tecnológico para el éxito empresarial! 💡🌐\n\nEn GGNet entendemos que la tecnología es fundamental para el crecimiento y el éxito de tu empresa. Por eso, ofrecemos una amplia gama de servicios de consultoría y soluciones de infraestructura de TI 🔧🌐, para que puedas aprovechar al máximo todo el potencial de la era digital.', key=1)
-   
     if selection == 'Ideas para videos':
         ad_topic = st.text_input('Describir tema del video', key='cloud_video_topic')
         custom = st.text_input('Indicaciones adicionales:', key='cloud_video_custom')
         duration = st.text_input('Cuanto deseas que dure el video:', key='cloud_video_duration')
         st.divider()
         script = st.text_area('Guión del Anuncio', key='cloud_script')
-        generate_script = st.button('Generar Guión', key='cloud_gen_script', on_click=generate_text, args=[ggnet_description, f"Escribe un guion para un anuncio de video sobre {ad_topic} con una duración de {duration}. {custom}"])
+        generate_script = st.button('Generar Guión', key='cloud_gen_script', on_click=generate_script, args=[ggnet_description, f"Escribe un guion para un anuncio de video sobre {ad_topic} con una duración de {duration}. {custom}"])
 
         idea = st.text_area('Idea Visual', key='cloud_idea')
-        generate_idea = st.button('Generar idea', key='gen_cloud_idea', on_click=generate_text, args=[ggnet_description, f"Dame una idea sobre lo que podria mostrar en un video sobre {ad_topic}. {custom}"])
+        generate_idea = st.button('Generar idea', key='gen_cloud_idea', on_click=generate_idea, args=[ggnet_description, f"Dame una idea sobre lo que podria mostrar en un video sobre {ad_topic}. {custom}"])
 
     if selection == 'Creacion de Anuncios':
         app = st.selectbox('Seleccionar red social', ['Facebook', 'LinkedIn'], key='cloud_app')
@@ -67,10 +90,10 @@ with cloud_tab:
 
         st.divider()
         ad_title = st.text_input('Titulo del Anuncio', key='cloud_title')
-        title_button = st.button('Generar Titulo', key='cloud_title_btn', on_click=generate_text, args=[ggnet_description, f"Escribe el titulo para un post en {app} sobre {ad_topic}. {custom}"])
+        title_button = st.button('Generar Titulo', key='cloud_title_btn', on_click=generate_title, args=[ggnet_description, f"Escribe el titulo para un post en {app} sobre {ad_topic}. {custom}"])
 
         ad_content = st.text_area('Contenido del Anuncio', key='cloud_content')
-        content_button = st.button('Generar Contenido', key='cloud_content_btn', on_click=generate_text, args=[ggnet_description, f"Escribe el contenido para un post en {app} sobre {ad_topic}. {custom}"])
+        content_button = st.button('Generar Contenido', key='cloud_content_btn', on_click=generate_content, args=[ggnet_description, f"Escribe el contenido para un post en {app} sobre {ad_topic}. {custom}"])
 
 
         if app == 'Facebook':
@@ -121,18 +144,25 @@ with internet_tab:
         st.caption("Esta descripción le explica a ChatGPT que es GGNET y que servicios ofrece. Para mejores resultados esta debe ser lo mas detallada posible.")
 
     client = OpenAI(api_key=st.secrets['OPENAI_KEY']) 
-    selection = st.selectbox('Seleccionar funcion', ['Creacion de Anuncios',  'Ideas para videos'], key='internet_select')
+    selection = st.selectbox('Seleccionar funcion', ['Creacion de Anuncios', 'Ideas para videos', 'Petición Personalizada'], key='internet_select')
    
+    if selection == 'Petición Personalizada':
+        req = st.text_input('Petición', key='cloud_req')
+        st.divider()
+        cloud_custom = st.text_area('Respuesta', key='cloud_custom')
+        generate_script = st.button('Generar Respuesta', key='cloud_gen_custom', on_click=generate_custom, args=[ggnet_description, {req}])
+
+
     if selection == 'Ideas para videos':
         ad_topic = st.text_input('Describir tema del video', key='internet_video_topic')
         custom = st.text_input('Indicaciones adicionales:', key='internet_video_custom')
         duration = st.text_input('Cuanto deseas que dure el video:', key='internet_video_duration')
         st.divider()
         script = st.text_area('Guión del Anuncio', key='internet_script')
-        generate_script = st.button('Generar Guión', key='internet_gen_script', on_click=generate_text, args=[ggnet_description, f"Escribe un guion para un anuncio de video sobre {ad_topic} con una duración de {duration}. {custom}"])
+        generate_script = st.button('Generar Guión', key='internet_gen_script', on_click=generate_script, args=[ggnet_description, f"Escribe un guion para un anuncio de video sobre {ad_topic} con una duración de {duration}. {custom}"])
 
         idea = st.text_area('Idea Visual', key='internet_idea')
-        generate_idea = st.button('Generar idea', key='gen_internet_idea', on_click=generate_text, args=[ggnet_description, f"Dame una idea sobre lo que podria mostrar en un video sobre {ad_topic}. {custom}"])
+        generate_idea = st.button('Generar idea', key='gen_internet_idea', on_click=generate_idea, args=[ggnet_description, f"Dame una idea sobre lo que podria mostrar en un video sobre {ad_topic}. {custom}"])
 
     if selection == 'Creacion de Anuncios':
         app = st.selectbox('Seleccionar red social', ['Facebook', 'LinkedIn'], key='internet_app')
@@ -141,10 +171,10 @@ with internet_tab:
 
         st.divider()
         ad_title = st.text_input('Titulo del Anuncio', key='internet_title')
-        title_button = st.button('Generar Titulo', key='internet_title_btn', on_click=generate_text, args=[ggnet_description, f"Escribe el titulo para un post en {app} sobre {ad_topic}. {custom}"])
+        title_button = st.button('Generar Titulo', key='internet_title_btn', on_click=generate_title, args=[ggnet_description, f"Escribe el titulo para un post en {app} sobre {ad_topic}. {custom}"])
 
         ad_content = st.text_area('Contenido del Anuncio', key='internet_content')
-        content_button = st.button('Generar Contenido', key='internet_content_btn', on_click=generate_text, args=[ggnet_description, f"Escribe el contenido para un post en {app} sobre {ad_topic}. {custom}"])
+        content_button = st.button('Generar Contenido', key='internet_content_btn', on_click=generate_content, args=[ggnet_description, f"Escribe el contenido para un post en {app} sobre {ad_topic}. {custom}"])
 
 
         if app == 'Facebook':
